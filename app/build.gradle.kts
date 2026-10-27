@@ -129,7 +129,7 @@ android {
         )
     }
 
-    namespace = project.property("APP_ID").toString()
+    namespace = "org.fossify.keyboard"
 
     lint {
         checkReleaseBuilds = false
