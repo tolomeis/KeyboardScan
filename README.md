@@ -1,8 +1,28 @@
-# Fossify Keyboard
+# KeyboardScan
 
 <img alt="Logo" src="graphics/icon.webp" width="120" />
 
-<a href="https://play.google.com/store/apps/details?id=org.fossify.keyboard"><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height=80/></a> <a href="https://f-droid.org/packages/org.fossify.keyboard/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Get it on F-Droid" height=80/></a> <a href="https://apt.izzysoft.de/fdroid/index/apk/org.fossify.keyboard"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a>
+KeyboardScan is a fork of [Fossify Keyboard](https://github.com/FossifyOrg/Keyboard) that adds quick data entry from the physical world: tap a button, scan a barcode or QR code with the camera, and its content is typed straight into the focused field.
+
+It is developed as a volunteer tool for fundraising events, where data has to be entered quickly into web forms.
+
+## Credits and license
+
+KeyboardScan is based on **[Fossify Keyboard](https://github.com/FossifyOrg/Keyboard)** by the [Fossify](https://www.fossify.org) team and contributors. All the keyboard itself (layouts, languages, clipboard, themes...) is their work; please consider supporting them via [fossify.org](https://www.fossify.org).
+
+This project is **not affiliated with or endorsed by Fossify**. Please report issues with the scanning features here, not to Fossify.
+
+Like the original, KeyboardScan is free software released under the [GNU General Public License v3.0](LICENSE). Changes made in this fork are listed in the git history of this repository.
+
+### Changes compared to Fossify Keyboard
+
+- Barcode / QR code scanner in the keyboard toolbar (CameraX + bundled ML Kit model, works offline)
+- Different application ID and name, so it can be installed next to Fossify Keyboard
+- No internet permission, as in the original app
+
+## About the original app
+
+The following is the original description of Fossify Keyboard, which still applies to KeyboardScan.
 
 Introducing Fossify Keyboard – your go-to solution for effortless and efficient typing. Experience a seamless typing experience designed to cater to all your needs, whether chatting with friends or inserting texts, numbers, or symbols.
 
