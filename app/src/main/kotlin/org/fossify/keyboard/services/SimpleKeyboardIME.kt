@@ -128,9 +128,22 @@ import org.fossify.keyboard.views.MyKeyboardView
 import java.io.ByteArrayOutputStream
 import java.util.Locale
 
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.mlkit.vision.MlKitAnalyzer
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
+
 
 // based on https://www.androidauthority.com/lets-build-custom-keyboard-android-832362/
-class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, SharedPreferences.OnSharedPreferenceChangeListener {
+class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, SharedPreferences.OnSharedPreferenceChangeListener, LifecycleOwner {
     companion object {
         // How quickly do we have to double tap shift to enable permanent caps lock
         private var SHIFT_PERM_TOGGLE_SPEED = 500
@@ -142,6 +155,16 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
         const val KEYBOARD_NUMBERS = 3
         const val KEYBOARD_PHONE = 4
         const val KEYBOARD_SYMBOLS_ALT = 5
+    }
+
+    private val lifecycleRegistry = LifecycleRegistry(this)
+    override val lifecycle: Lifecycle get() = lifecycleRegistry
+    private var isScanning = false
+    private var lastScanTime = 0L
+
+    override fun onCreate() {
+        super.onCreate()
+        lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
 
     private var keyboard: MyKeyboard? = null
@@ -163,6 +186,7 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
 
     override fun onCreateInputView(): View {
         binding = KeyboardViewKeyboardBinding.inflate(layoutInflater)
+        binding.root.setViewTreeLifecycleOwner(this)
         keyboardView = binding.keyboardView.apply {
             setKeyboardHolder(binding)
             setKeyboard(keyboard!!)
@@ -170,7 +194,7 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
             setupEdgeToEdge()
             mOnKeyboardActionListener = this@SimpleKeyboardIME
         }
-
+        setupBarcodeScanner()
         return binding.root
     }
 
@@ -218,6 +242,73 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
 
         keyboard?.setShifted(ShiftState.OFF)
         keyboardView?.invalidateAllKeys()
+    }
+
+    private fun setupBarcodeScanner() {
+        val previewView = binding.cameraPreviewView
+        previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+
+        val options = BarcodeScannerOptions.Builder()
+            .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+            .build()
+        val scanner = BarcodeScanning.getClient(options)
+        val mainExecutor = ContextCompat.getMainExecutor(this)
+
+        val controller = LifecycleCameraController(this)
+        controller.setImageAnalysisAnalyzer(
+            mainExecutor,
+            MlKitAnalyzer(
+                listOf(scanner),
+                ImageAnalysis.COORDINATE_SYSTEM_VIEW_REFERENCED,
+                mainExecutor
+            ) { result ->
+                val code = result?.getValue(scanner)?.firstOrNull()?.rawValue
+                val now = android.os.SystemClock.elapsedRealtime()
+                if (!code.isNullOrEmpty() && now - lastScanTime > 800) {
+                    lastScanTime = now
+                    currentInputConnection?.commitText(code, 1)
+                    stopScanner()
+                }
+            }
+        )
+        controller.bindToLifecycle(this)
+        previewView.controller = controller
+
+        binding.barcodeScanBtn.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                // If we don't have permission, open the app's settings so the user can grant it manually.
+                android.widget.Toast.makeText(this, "Please grant Camera permission in App Settings", android.widget.Toast.LENGTH_LONG).show()
+                val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = android.net.Uri.fromParts("package", packageName, null)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+                return@setOnClickListener
+            }
+            if (isScanning) stopScanner() else startScanner()
+        }
+    }
+
+    private fun startScanner() {
+        isScanning = true
+        binding.keyboardView.visibility = View.INVISIBLE
+        binding.cameraPreviewView.visibility = View.VISIBLE
+        binding.barcodeScanBtn.setImageResource(R.drawable.ic_clear_vector)
+        lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+    }
+
+    private fun stopScanner() {
+        if (!isScanning) return
+        isScanning = false
+        lifecycleRegistry.currentState = Lifecycle.State.CREATED
+        binding.cameraPreviewView.visibility = View.GONE
+        binding.keyboardView.visibility = View.VISIBLE
+        binding.barcodeScanBtn.setImageResource(android.R.drawable.ic_menu_camera)
+    }
+
+    override fun onWindowHidden() {
+        super.onWindowHidden()
+        stopScanner()
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
