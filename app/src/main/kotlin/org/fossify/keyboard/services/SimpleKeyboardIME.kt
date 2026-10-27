@@ -12,6 +12,8 @@ import android.icu.util.ULocale
 import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType.TYPE_CLASS_DATETIME
 import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.InputType.TYPE_CLASS_PHONE
@@ -119,6 +121,7 @@ import org.fossify.keyboard.helpers.LANGUAGE_TURKISH
 import org.fossify.keyboard.helpers.LANGUAGE_TURKISH_Q
 import org.fossify.keyboard.helpers.LANGUAGE_UKRAINIAN
 import org.fossify.keyboard.helpers.MyKeyboard
+import org.fossify.keyboard.helpers.NfcOutputTemplate
 import org.fossify.keyboard.helpers.NfcScanResult
 import org.fossify.keyboard.helpers.SHOW_KEY_BORDERS
 import org.fossify.keyboard.helpers.SHOW_NUMBERS_ROW
@@ -149,6 +152,7 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
     companion object {
         // How quickly do we have to double tap shift to enable permanent caps lock
         private var SHIFT_PERM_TOGGLE_SPEED = 500
+        private const val NFC_TYPING_STEP_MS = 120L
 
         // Keyboard modes
         const val KEYBOARD_LETTERS = 0
@@ -238,16 +242,19 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
         }
     }
 
-    // types the fields read by NfcReadActivity, moving to the next form field with TAB
+    // types the fields read by NfcReadActivity following the user template. Tokens are sent one at a time with a short pause,
+    // so that browsers apply each TAB (focus change) before the next text is committed
     private fun typePendingNfcResult() {
         val fields = NfcScanResult.consume() ?: return
-        val inputConnection = currentInputConnection ?: return
-        fields.forEachIndexed { index, value ->
-            if (index > 0) {
-                inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB))
-                inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB))
-            }
-            inputConnection.commitText(value, 1)
+        val tokens = NfcOutputTemplate.build(config.nfcOutputTemplate, fields)
+        val handler = Handler(Looper.getMainLooper())
+        tokens.forEachIndexed { index, token ->
+            handler.postDelayed({
+                when (token) {
+                    is NfcOutputTemplate.Token.Text -> currentInputConnection?.commitText(token.value, 1)
+                    is NfcOutputTemplate.Token.Key -> sendDownUpKeyEvents(token.keyCode)
+                }
+            }, index * NFC_TYPING_STEP_MS)
         }
     }
 

@@ -14,6 +14,7 @@ import org.fossify.commons.models.RadioItem
 import org.fossify.keyboard.R
 import org.fossify.keyboard.databinding.ActivitySettingsBinding
 import org.fossify.keyboard.dialogs.ManageKeyboardLanguagesDialog
+import org.fossify.keyboard.dialogs.NfcTemplateDialog
 import org.fossify.keyboard.extensions.config
 import org.fossify.keyboard.extensions.getCurrentVoiceInputMethod
 import org.fossify.keyboard.extensions.getKeyboardLanguageText
@@ -67,6 +68,7 @@ class SettingsActivity : SimpleActivity() {
         setupSentencesCapitalization()
         setupShowNumbersRow()
         setupVoiceInputMethod()
+        setupNfcTemplate()
 
         binding.apply {
             updateTextColors(settingsNestedScrollview)
@@ -77,6 +79,7 @@ class SettingsActivity : SimpleActivity() {
                 settingsLayoutAppearanceLabel,
                 settingsKeypressLabel,
                 settingsTypingInputLabel,
+                settingsNfcLabel,
                 settingsClipboardSettingsLabel
             ).forEach {
                 it.setTextColor(getProperPrimaryColor())
@@ -306,6 +309,17 @@ class SettingsActivity : SimpleActivity() {
             settingsShowNumbersRowHolder.setOnClickListener {
                 settingsShowNumbersRow.toggle()
                 config.showNumbersRow = settingsShowNumbersRow.isChecked
+            }
+        }
+    }
+
+    private fun setupNfcTemplate() {
+        binding.apply {
+            settingsNfcTemplateValue.text = config.nfcOutputTemplate
+            settingsNfcTemplateHolder.setOnClickListener {
+                NfcTemplateDialog(this@SettingsActivity) {
+                    settingsNfcTemplateValue.text = config.nfcOutputTemplate
+                }
             }
         }
     }

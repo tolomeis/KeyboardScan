@@ -30,6 +30,7 @@ const val SHOW_CLIPBOARD_CONTENT = "show_clipboard_content"
 const val SHOW_NUMBERS_ROW = "show_numbers_row"
 const val SELECTED_LANGUAGES = "selected_languages"
 const val VOICE_INPUT_METHOD = "voice_input_method"
+const val NFC_OUTPUT_TEMPLATE = "nfc_output_template"
 const val RECENTLY_USED_EMOJIS = "recently_used_emojis"
 
 // differentiate current and pinned clips at the keyboards' Clipboard section

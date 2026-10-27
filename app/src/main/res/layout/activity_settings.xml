@@ -362,6 +362,40 @@
                 layout="@layout/divider" />
 
             <TextView
+                android:id="@+id/settings_nfc_label"
+                style="@style/SettingsSectionLabelStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lettura tessera NFC" />
+
+            <RelativeLayout
+                android:id="@+id/settings_nfc_template_holder"
+                style="@style/SettingsHolderTextViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/settings_nfc_template"
+                    style="@style/SettingsTextLabelStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Formato dei dati inseriti" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/settings_nfc_template_value"
+                    style="@style/SettingsTextValueStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/settings_nfc_template"
+                    tools:text="{nome}{TAB}{cognome}" />
+
+            </RelativeLayout>
+
+            <include
+                android:id="@+id/settings_nfc_divider"
+                layout="@layout/divider" />
+
+            <TextView
                 android:id="@+id/settings_clipboard_settings_label"
                 style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"

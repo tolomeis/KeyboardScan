@@ -21,7 +21,7 @@ import org.fossify.keyboard.helpers.toHex
 /**
  * NFC reader mode needs a foreground activity, so the keyboard launches this small dialog-like activity.
  * It reads the personal data of a TS-CNS card, logs every APDU for diagnosis and hands
- * "nome, cognome, codice fiscale, comune" over to the keyboard through NfcScanResult.
+ * the parsed fields over to the keyboard through NfcScanResult.
  */
 class NfcReadActivity : Activity(), NfcAdapter.ReaderCallback {
     private var nfcAdapter: NfcAdapter? = null
@@ -93,17 +93,13 @@ class NfcReadActivity : Activity(), NfcAdapter.ReaderCallback {
             }
         }
 
-        val result = fields?.let {
-            listOf(it["nome"].orEmpty(), it["cognome"].orEmpty(), it["codice_fiscale"].orEmpty(), it["comune_residenza"].orEmpty())
-        }
-
-        if (result == null || result.take(3).any { it.isEmpty() }) {
+        if (fields == null || listOf("nome", "cognome", "codice_fiscale").any { fields[it].isNullOrEmpty() }) {
             setStatus("Lettura non riuscita: usa \"Copia log\" e mandamelo")
             return
         }
 
-        NfcScanResult.set(result)
-        setStatus("Letto: ${result[0]} ${result[1]}. Ritorno al campo…")
+        NfcScanResult.set(fields)
+        setStatus("Letto: ${fields["nome"]} ${fields["cognome"]}. Ritorno al campo…")
         runOnUiThread { statusView.postDelayed({ finish() }, 1500) }
     }
 

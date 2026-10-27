@@ -67,6 +67,10 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getString(VOICE_INPUT_METHOD, "")!!
         set(voiceInputMethod) = prefs.edit().putString(VOICE_INPUT_METHOD, voiceInputMethod).apply()
 
+    var nfcOutputTemplate: String
+        get() = prefs.getString(NFC_OUTPUT_TEMPLATE, NfcOutputTemplate.DEFAULT)!!
+        set(nfcOutputTemplate) = prefs.edit().putString(NFC_OUTPUT_TEMPLATE, nfcOutputTemplate).apply()
+
     var selectedLanguages: MutableSet<Int>
         get() {
             val defaultLanguage = getDefaultLanguage().toString()
