@@ -65,6 +65,7 @@ import org.fossify.commons.helpers.TEXT_COLOR
 import org.fossify.commons.helpers.isNougatPlus
 import org.fossify.commons.helpers.isPiePlus
 import org.fossify.keyboard.R
+import org.fossify.keyboard.activities.NfcReadActivity
 import org.fossify.keyboard.activities.SettingsActivity
 import org.fossify.keyboard.databinding.KeyboardViewKeyboardBinding
 import org.fossify.keyboard.extensions.config
@@ -118,6 +119,7 @@ import org.fossify.keyboard.helpers.LANGUAGE_TURKISH
 import org.fossify.keyboard.helpers.LANGUAGE_TURKISH_Q
 import org.fossify.keyboard.helpers.LANGUAGE_UKRAINIAN
 import org.fossify.keyboard.helpers.MyKeyboard
+import org.fossify.keyboard.helpers.NfcScanResult
 import org.fossify.keyboard.helpers.SHOW_KEY_BORDERS
 import org.fossify.keyboard.helpers.SHOW_NUMBERS_ROW
 import org.fossify.keyboard.helpers.ShiftState
@@ -195,6 +197,13 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
             mOnKeyboardActionListener = this@SimpleKeyboardIME
         }
         setupBarcodeScanner()
+        binding.nfcScanBtn.setOnClickListener {
+            stopScanner()
+            val intent = Intent(this, NfcReadActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(intent)
+        }
         return binding.root
     }
 
@@ -224,6 +233,22 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
             breakIterator = BreakIterator.getCharacterInstance(ULocale.getDefault())
         }
         updateShiftKeyState()
+        if (attribute.inputType != TYPE_NULL) {
+            typePendingNfcResult()
+        }
+    }
+
+    // types the fields read by NfcReadActivity, moving to the next form field with TAB
+    private fun typePendingNfcResult() {
+        val fields = NfcScanResult.consume() ?: return
+        val inputConnection = currentInputConnection ?: return
+        fields.forEachIndexed { index, value ->
+            if (index > 0) {
+                inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB))
+                inputConnection.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB))
+            }
+            inputConnection.commitText(value, 1)
+        }
     }
 
     private fun updateShiftKeyState() {
