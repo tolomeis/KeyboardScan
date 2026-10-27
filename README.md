@@ -17,6 +17,7 @@ Like the original, KeyboardScan is free software released under the [GNU General
 ### Changes compared to Fossify Keyboard
 
 - Barcode / QR code scanner in the keyboard toolbar (CameraX + bundled ML Kit model, works offline)
+- NFC reader for Italian health insurance cards (TS-CNS): reads name, surname, codice fiscale and residence and types them following a configurable template, with TAB between form fields
 - Different application ID and name, so it can be installed next to Fossify Keyboard
 - No internet permission, as in the original app
 

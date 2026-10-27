@@ -69,7 +69,12 @@ class Config(context: Context) : BaseConfig(context) {
 
     var nfcOutputTemplate: String
         get() = prefs.getString(NFC_OUTPUT_TEMPLATE, NfcOutputTemplate.DEFAULT)!!
-        set(nfcOutputTemplate) = prefs.edit().putString(NFC_OUTPUT_TEMPLATE, nfcOutputTemplate).apply()
+        // the default is never stored, so users who did not customize the template get the new default after an app update
+        set(nfcOutputTemplate) = if (nfcOutputTemplate == NfcOutputTemplate.DEFAULT) {
+            prefs.edit().remove(NFC_OUTPUT_TEMPLATE).apply()
+        } else {
+            prefs.edit().putString(NFC_OUTPUT_TEMPLATE, nfcOutputTemplate).apply()
+        }
 
     var selectedLanguages: MutableSet<Int>
         get() {
