@@ -1,6 +1,6 @@
 # Informativa sulla privacy – KeyboardScan
 
-*Ultimo aggiornamento: 28 ottobre 2026* · [English version below](#privacy-policy--keyboardscan)
+*Ultimo aggiornamento: 29 ottobre 2026* · [English version below](#privacy-policy--keyboardscan)
 
 KeyboardScan è una tastiera Android open source, derivata da [Fossify Keyboard](https://github.com/FossifyOrg/Keyboard), sviluppata da Simone Tolomei. Questa informativa descrive quali dati l'app tratta e come.
 
@@ -13,7 +13,7 @@ KeyboardScan è una tastiera Android open source, derivata da [Fossify Keyboard]
 - **Testo digitato.** Come ogni tastiera, KeyboardScan riceve i tasti premuti per inserirli nel campo attivo. Il testo non viene salvato né trasmesso.
 - **Appunti.** Se usi la funzione appunti, i testi copiati o fissati vengono salvati solo nella memoria locale dell'app e puoi eliminarli in qualsiasi momento dalle impostazioni.
 - **Fotocamera (scansione codici a barre e QR).** La fotocamera si attiva solo quando premi il pulsante di scansione. Le immagini vengono analizzate in tempo reale sul dispositivo per riconoscere il codice, che viene inserito nel campo attivo. Nessuna immagine viene salvata o inviata.
-- **NFC (lettura tessera sanitaria).** Quando premi il pulsante NFC e avvicini una tessera sanitaria (TS-CNS), l'app legge dal chip i dati anagrafici pubblici della tessera (nome, cognome, codice fiscale, dati di nascita e di residenza) e li inserisce nei campi del modulo che stai compilando, secondo il formato scelto nelle impostazioni. I dati vengono tenuti solo in memoria, per un massimo di 30 secondi, il tempo necessario a inserirli, e poi scartati. Non vengono salvati né trasmessi. L'app non legge né richiede il PIN della tessera.
+- **NFC (lettura tessera sanitaria).** Quando premi il pulsante NFC e avvicini una tessera sanitaria (TS-CNS), l'app legge dal chip solo la sezione dei dati anagrafici che la tessera rende accessibile senza PIN (nome, cognome, codice fiscale, dati di nascita e di residenza). L'app non accede alle aree protette del chip, come i certificati di autenticazione e firma, e non legge alcun dato sanitario e li inserisce nei campi del modulo che stai compilando, secondo il formato scelto nelle impostazioni. I dati vengono tenuti solo in memoria, per un massimo di 30 secondi, il tempo necessario a inserirli, e poi scartati. Non vengono salvati né trasmessi. L'app non legge né richiede il PIN della tessera.
 - **Impostazioni.** Le preferenze dell'app (lingua, colori, formato di inserimento, ecc.) sono salvate solo sul dispositivo.
 
 ## Permessi
@@ -38,7 +38,7 @@ Eventuali modifiche a questa informativa saranno pubblicate in questa pagina. Il
 
 # Privacy policy – KeyboardScan
 
-*Last updated: October 28, 2026*
+*Last updated: October 29, 2026*
 
 KeyboardScan is an open source Android keyboard based on [Fossify Keyboard](https://github.com/FossifyOrg/Keyboard), developed by Simone Tolomei.
 
@@ -47,7 +47,7 @@ KeyboardScan is an open source Android keyboard based on [Fossify Keyboard](http
 - **Typed text** is passed to the focused field and is never stored or transmitted.
 - **Clipboard** items you create are stored only in the app's local storage and can be deleted at any time.
 - **Camera** is used only when you tap the scan button, to recognize barcodes and QR codes on the device. No image is stored or sent.
-- **NFC** is used only when you tap the NFC button, to read the public personal data of an Italian health insurance card (name, surname, tax code, birth and residence data) and type it into the form you are filling. The data is kept in memory for at most 30 seconds and then discarded; it is never stored or transmitted. The card PIN is never read or requested.
+- **NFC** is used only when you tap the NFC button, to read only the personal data section that an Italian health insurance card (TS-CNS) exposes without a PIN (name, surname, tax code, birth and residence data). The app never accesses the protected areas of the chip, such as authentication and signature certificates, and reads no health data and type it into the form you are filling. The data is kept in memory for at most 30 seconds and then discarded; it is never stored or transmitted. The card PIN is never read or requested.
 - **Settings** are stored only on the device.
 
 The app contains no ads, analytics or tracking. Barcode recognition uses the bundled, offline version of Google ML Kit; since the app has no internet access, no data can be sent to Google or anyone else.
