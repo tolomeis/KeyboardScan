@@ -18,6 +18,7 @@ Like the original, KeyboardScan is free software released under the [GNU General
 
 - Barcode / QR code scanner in the keyboard toolbar (CameraX + bundled ML Kit model, works offline)
 - NFC reader for Italian health insurance cards (TS-CNS): reads name, surname, codice fiscale and residence and types them following a configurable template, with TAB between form fields
+  - Municipality codes are turned into names using the [ISTAT list of Italian municipalities](https://www.istat.it/classificazione/codici-dei-comuni-delle-province-e-delle-regioni/) (© ISTAT, CC BY 4.0), see `scripts/update_comuni.py`
 - Different application ID and name, so it can be installed next to Fossify Keyboard
 - No internet permission, as in the original app
 

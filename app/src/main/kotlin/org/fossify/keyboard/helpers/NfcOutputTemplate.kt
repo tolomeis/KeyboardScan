@@ -14,6 +14,7 @@ object NfcOutputTemplate {
         "cognome" to "cognome",
         "cf" to "codice_fiscale",
         "comune" to "comune_residenza",
+        "comune_codice" to "comune_residenza_codice",
         "indirizzo" to "indirizzo_residenza",
         "sesso" to "sesso",
         "data_nascita" to "data_nascita",

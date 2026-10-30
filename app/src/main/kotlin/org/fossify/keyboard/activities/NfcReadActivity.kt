@@ -15,6 +15,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import org.fossify.keyboard.helpers.CnsCardReader
+import org.fossify.keyboard.helpers.Comuni
 import org.fossify.keyboard.helpers.NfcScanResult
 import org.fossify.keyboard.helpers.toHex
 
@@ -81,7 +82,7 @@ class NfcReadActivity : Activity(), NfcAdapter.ReaderCallback {
             val data = CnsCardReader(isoDep, ::log).readPersonalData()
             if (data != null) {
                 log("--- Dati grezzi (${data.size}B) ---\n${String(data, Charsets.ISO_8859_1)}")
-                fields = CnsCardReader.parsePersonalData(data)
+                fields = CnsCardReader.parsePersonalData(data)?.let(::resolveComuni)
                 fields?.forEach { (key, value) -> log("$key = $value") }
             }
         } catch (e: Exception) {
@@ -99,8 +100,28 @@ class NfcReadActivity : Activity(), NfcAdapter.ReaderCallback {
         }
 
         NfcScanResult.set(fields)
-        setStatus("Letto: ${fields["nome"]} ${fields["cognome"]}. Ritorno al campo…")
-        runOnUiThread { statusView.postDelayed({ finish() }, 1500) }
+        runOnUiThread { finish() }
+    }
+
+    // the card stores municipalities as codes, keep the code in "<field>_codice" and put the name in "<field>"
+    private fun resolveComuni(fields: Map<String, String>): Map<String, String> {
+        val result = LinkedHashMap(fields)
+        for (key in listOf("comune_residenza", "comune_nascita")) {
+            val code = fields[key]?.takeIf { it.isNotEmpty() } ?: continue
+            result["${key}_codice"] = code
+            val name = try {
+                Comuni.nameFromCode(this, code)
+            } catch (e: Exception) {
+                log("ERRORE lettura elenco comuni: ${e.message}")
+                null
+            }
+            if (name != null) {
+                result[key] = name
+            } else {
+                log("Codice comune $code non trovato nell'elenco ISTAT, uso il codice")
+            }
+        }
+        return result
     }
 
     private fun log(line: String) {
