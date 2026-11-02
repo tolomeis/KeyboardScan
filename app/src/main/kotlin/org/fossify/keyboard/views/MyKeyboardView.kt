@@ -515,6 +515,8 @@ class MyKeyboardView @JvmOverloads constructor(
             pinnedClipboardItems.applyColorFilter(mTextColor)
             clipboardClear.applyColorFilter(mTextColor)
             voiceInputButton.applyColorFilter(mTextColor)
+            nfcSearchBtn.setTextColor(mTextColor)
+            nfcNewBtn.setTextColor(mTextColor)
             voiceInputButton.beGoneIf(mVoiceInputMethod.isEmpty())
 
             mToolbarHolder?.beInvisibleIf(context.isDeviceLocked)

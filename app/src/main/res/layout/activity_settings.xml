@@ -369,24 +369,47 @@
                 android:text="Lettura tessera NFC" />
 
             <RelativeLayout
-                android:id="@+id/settings_nfc_template_holder"
+                android:id="@+id/settings_nfc_template_search_holder"
                 style="@style/SettingsHolderTextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_nfc_template"
+                    android:id="@+id/settings_nfc_template_search"
                     style="@style/SettingsTextLabelStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Formato dei dati inseriti" />
+                    android:text="Formato tasto &quot;Cerca&quot;" />
 
                 <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_nfc_template_value"
+                    android:id="@+id/settings_nfc_template_search_value"
                     style="@style/SettingsTextValueStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_nfc_template"
+                    android:layout_below="@+id/settings_nfc_template_search"
+                    tools:text="{nome}{TAB}{cognome}" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/settings_nfc_template_new_holder"
+                style="@style/SettingsHolderTextViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/settings_nfc_template_new"
+                    style="@style/SettingsTextLabelStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Formato tasto &quot;Nuovo&quot;" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/settings_nfc_template_new_value"
+                    style="@style/SettingsTextValueStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/settings_nfc_template_new"
                     tools:text="{nome}{TAB}{cognome}" />
 
             </RelativeLayout>

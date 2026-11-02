@@ -67,14 +67,14 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getString(VOICE_INPUT_METHOD, "")!!
         set(voiceInputMethod) = prefs.edit().putString(VOICE_INPUT_METHOD, voiceInputMethod).apply()
 
-    var nfcOutputTemplate: String
-        get() = prefs.getString(NFC_OUTPUT_TEMPLATE, NfcOutputTemplate.DEFAULT)!!
-        // the default is never stored, so users who did not customize the template get the new default after an app update
-        set(nfcOutputTemplate) = if (nfcOutputTemplate == NfcOutputTemplate.DEFAULT) {
-            prefs.edit().remove(NFC_OUTPUT_TEMPLATE).apply()
-        } else {
-            prefs.edit().putString(NFC_OUTPUT_TEMPLATE, nfcOutputTemplate).apply()
-        }
+    fun getNfcTemplate(mode: NfcOutputTemplate.Mode): String = prefs.getString(mode.prefKey, mode.default)!!
+
+    // the default is never stored, so users who did not customize a template get the new default after an app update
+    fun setNfcTemplate(mode: NfcOutputTemplate.Mode, template: String) = if (template == mode.default) {
+        prefs.edit().remove(mode.prefKey).apply()
+    } else {
+        prefs.edit().putString(mode.prefKey, template).apply()
+    }
 
     var selectedLanguages: MutableSet<Int>
         get() {

@@ -6,19 +6,21 @@ import android.os.SystemClock
 object NfcScanResult {
     private const val MAX_AGE_MS = 30_000L
 
-    private var fields: Map<String, String>? = null
+    data class Pending(val fields: Map<String, String>, val mode: NfcOutputTemplate.Mode)
+
+    private var pending: Pending? = null
     private var timestamp = 0L
 
     @Synchronized
-    fun set(values: Map<String, String>) {
-        fields = values
+    fun set(fields: Map<String, String>, mode: NfcOutputTemplate.Mode) {
+        pending = Pending(fields, mode)
         timestamp = SystemClock.elapsedRealtime()
     }
 
     @Synchronized
-    fun consume(): Map<String, String>? {
-        val result = fields?.takeIf { SystemClock.elapsedRealtime() - timestamp < MAX_AGE_MS }
-        fields = null
+    fun consume(): Pending? {
+        val result = pending?.takeIf { SystemClock.elapsedRealtime() - timestamp < MAX_AGE_MS }
+        pending = null
         return result
     }
 }

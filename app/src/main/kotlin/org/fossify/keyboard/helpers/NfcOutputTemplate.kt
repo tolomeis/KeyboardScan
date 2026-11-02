@@ -7,7 +7,11 @@ import android.view.KeyEvent
  * Placeholders map to the fields parsed by CnsCardReader, {TAB} and {ENTER} are sent as real key presses.
  */
 object NfcOutputTemplate {
-    const val DEFAULT = "{nome}{TAB}{cognome}{TAB}{cf}{TAB}{comune}"
+    /** The keyboard has one NFC button per mode, each mode types the card data with its own template. */
+    enum class Mode(val label: String, val prefKey: String, val default: String) {
+        SEARCH("Cerca", NFC_TEMPLATE_SEARCH, "{nome}{TAB}{cognome}{TAB}{comune}"),
+        NEW("Nuovo", NFC_TEMPLATE_NEW, "{nome}{TAB}{cognome}{TAB}{cf}{TAB}{TAB}{TAB}{comune}")
+    }
 
     val PLACEHOLDERS = linkedMapOf(
         "nome" to "nome",
@@ -28,9 +32,9 @@ object NfcOutputTemplate {
         data class Key(val keyCode: Int) : Token()
     }
 
-    fun helpText() = "Segnaposto disponibili:\n" +
+    fun helpText(mode: Mode) = "Segnaposto disponibili:\n" +
         PLACEHOLDERS.keys.joinToString(" ") { "{$it}" } +
-        "\n\nTasti: {TAB} passa al campo successivo, {ENTER} invia.\nPredefinito: $DEFAULT"
+        "\n\nTasti: {TAB} passa al campo successivo, {ENTER} invia.\nPredefinito: ${mode.default}"
 
     fun build(template: String, fields: Map<String, String>): List<Token> {
         val tokens = ArrayList<Token>()

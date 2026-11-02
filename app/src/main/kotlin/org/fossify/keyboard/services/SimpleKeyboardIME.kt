@@ -201,13 +201,8 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
             mOnKeyboardActionListener = this@SimpleKeyboardIME
         }
         setupBarcodeScanner()
-        binding.nfcScanBtn.setOnClickListener {
-            stopScanner()
-            val intent = Intent(this, NfcReadActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            startActivity(intent)
-        }
+        binding.nfcSearchBtn.setOnClickListener { startNfcRead(NfcOutputTemplate.Mode.SEARCH) }
+        binding.nfcNewBtn.setOnClickListener { startNfcRead(NfcOutputTemplate.Mode.NEW) }
         return binding.root
     }
 
@@ -244,9 +239,18 @@ class SimpleKeyboardIME : InputMethodService(), OnKeyboardActionListener, Shared
 
     // types the fields read by NfcReadActivity following the user template. Tokens are sent one at a time with a short pause,
     // so that browsers apply each TAB (focus change) before the next text is committed
+    private fun startNfcRead(mode: NfcOutputTemplate.Mode) {
+        stopScanner()
+        val intent = Intent(this, NfcReadActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(NfcReadActivity.EXTRA_MODE, mode.name)
+        }
+        startActivity(intent)
+    }
+
     private fun typePendingNfcResult() {
-        val fields = NfcScanResult.consume() ?: return
-        val tokens = NfcOutputTemplate.build(config.nfcOutputTemplate, fields)
+        val pending = NfcScanResult.consume() ?: return
+        val tokens = NfcOutputTemplate.build(config.getNfcTemplate(pending.mode), pending.fields)
         val handler = Handler(Looper.getMainLooper())
         tokens.forEachIndexed { index, token ->
             handler.postDelayed({

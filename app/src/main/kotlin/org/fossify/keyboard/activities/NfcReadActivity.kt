@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import org.fossify.keyboard.helpers.CnsCardReader
 import org.fossify.keyboard.helpers.Comuni
+import org.fossify.keyboard.helpers.NfcOutputTemplate
 import org.fossify.keyboard.helpers.NfcScanResult
 import org.fossify.keyboard.helpers.toHex
 
@@ -25,7 +26,12 @@ import org.fossify.keyboard.helpers.toHex
  * the parsed fields over to the keyboard through NfcScanResult.
  */
 class NfcReadActivity : Activity(), NfcAdapter.ReaderCallback {
+    companion object {
+        const val EXTRA_MODE = "nfc_mode"
+    }
+
     private var nfcAdapter: NfcAdapter? = null
+    private var mode = NfcOutputTemplate.Mode.NEW
     private lateinit var statusView: TextView
     private lateinit var logView: TextView
     private lateinit var scrollView: ScrollView
@@ -33,13 +39,14 @@ class NfcReadActivity : Activity(), NfcAdapter.ReaderCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFinishOnTouchOutside(false)
+        mode = NfcOutputTemplate.Mode.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_MODE) } ?: mode
         buildLayout()
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         when {
             nfcAdapter == null -> statusView.text = "NFC non disponibile su questo dispositivo"
             !nfcAdapter!!.isEnabled -> statusView.text = "NFC disattivato: attivalo nelle impostazioni"
-            else -> statusView.text = "Appoggia la tessera sul retro del telefono…"
+            else -> statusView.text = "${mode.label}: appoggia la tessera sul retro del telefono…"
         }
     }
 
@@ -99,7 +106,7 @@ class NfcReadActivity : Activity(), NfcAdapter.ReaderCallback {
             return
         }
 
-        NfcScanResult.set(fields)
+        NfcScanResult.set(fields, mode)
         runOnUiThread { finish() }
     }
 

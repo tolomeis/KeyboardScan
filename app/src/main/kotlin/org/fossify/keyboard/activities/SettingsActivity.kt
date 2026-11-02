@@ -2,6 +2,8 @@ package org.fossify.keyboard.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import org.fossify.commons.dialogs.RadioGroupDialog
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.getProperPrimaryColor
@@ -15,6 +17,7 @@ import org.fossify.keyboard.R
 import org.fossify.keyboard.databinding.ActivitySettingsBinding
 import org.fossify.keyboard.dialogs.ManageKeyboardLanguagesDialog
 import org.fossify.keyboard.dialogs.NfcTemplateDialog
+import org.fossify.keyboard.helpers.NfcOutputTemplate
 import org.fossify.keyboard.extensions.config
 import org.fossify.keyboard.extensions.getCurrentVoiceInputMethod
 import org.fossify.keyboard.extensions.getKeyboardLanguageText
@@ -315,11 +318,16 @@ class SettingsActivity : SimpleActivity() {
 
     private fun setupNfcTemplate() {
         binding.apply {
-            settingsNfcTemplateValue.text = config.nfcOutputTemplate
-            settingsNfcTemplateHolder.setOnClickListener {
-                NfcTemplateDialog(this@SettingsActivity) {
-                    settingsNfcTemplateValue.text = config.nfcOutputTemplate
-                }
+            setupNfcTemplateHolder(NfcOutputTemplate.Mode.SEARCH, settingsNfcTemplateSearchHolder, settingsNfcTemplateSearchValue)
+            setupNfcTemplateHolder(NfcOutputTemplate.Mode.NEW, settingsNfcTemplateNewHolder, settingsNfcTemplateNewValue)
+        }
+    }
+
+    private fun setupNfcTemplateHolder(mode: NfcOutputTemplate.Mode, holder: View, value: TextView) {
+        value.text = config.getNfcTemplate(mode)
+        holder.setOnClickListener {
+            NfcTemplateDialog(this, mode) {
+                value.text = config.getNfcTemplate(mode)
             }
         }
     }
